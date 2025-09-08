@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-// Define o model User
 const User = sequelize.define(
   "User",
   {
