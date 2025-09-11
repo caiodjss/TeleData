@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             try {
                 const response = await fetch('http://localhost:3000/login', {
-                    method: 'POST',
+                    method: 'POST', //O método POST é uma requisição HTTP usada para enviar dados de um cliente para um servidor web. Ao contrário do método GET, 
+                                    //os dados enviados no POST ficam no corpo da requisição, o que os torna ocultos na URL e mais seguros para informações sensíveis, como credenciais. 
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
