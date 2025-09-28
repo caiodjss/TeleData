@@ -10,9 +10,13 @@ const nodemailer = require("nodemailer");
 const config = require("../config/config");
 const { Op } = require("sequelize");
 
+const passport = require("passport");
+require("../middleware/passport");
+
 const router = express.Router();
 
-// Ativar a conta
+
+// Ativar conta
 router.get("/activate/:token", async (req, res) => {
   try {
     const { token } = req.params;
@@ -20,7 +24,7 @@ router.get("/activate/:token", async (req, res) => {
     const user = await User.findOne({
       where: {
         activation_token: token,
-        activation_token_expires: { [Op.gt]: new Date() } // ainda não expirou
+        activation_token_expires: { [Op.gt]: new Date() }
       }
     });
 
@@ -31,7 +35,6 @@ router.get("/activate/:token", async (req, res) => {
     user.is_active = true;
     user.activation_token = null;
     user.activation_token_expires = null;
-
     await user.save();
 
     res.json({ message: "Conta ativada com sucesso!" });
@@ -41,7 +44,8 @@ router.get("/activate/:token", async (req, res) => {
   }
 });
 
-// LOGIN
+
+// Login normal (email/senha + JWT)
 router.post("/login", async (req, res) => {
   try {
     const { email, password, rememberMe } = req.body;
@@ -56,7 +60,6 @@ router.post("/login", async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
     if (!isPasswordValid) return res.status(401).send("Credenciais inválidas");
 
-    // Se o 2FA estiver ativado → não gera token ainda
     if (user.two_factor_enabled) {
       return res.status(200).json({
         message: "2FA_REQUIRED",
@@ -64,7 +67,6 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Se não tem 2FA → gera access token
     const accessToken = jwt.sign(
       { user_id: user.user_id, email: user.email },
       process.env.JWT_SECRET,
@@ -73,14 +75,11 @@ router.post("/login", async (req, res) => {
 
     let refreshToken;
     if (rememberMe) {
-      // Gera refresh token de longa duração
       refreshToken = jwt.sign(
         { user_id: user.user_id, email: user.email },
         process.env.JWT_REFRESH_SECRET,
         { expiresIn: "7d" }
       );
-
-      // Salva no banco
       user.refresh_token = refreshToken;
       await user.save();
     }
@@ -96,7 +95,8 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// REFRESH TOKEN / Lembrar-me
+
+// PROCEDIMENTO: Refresh token
 router.post("/refresh-token", async (req, res) => {
   try {
     const { refreshToken } = req.body;
@@ -105,11 +105,9 @@ router.post("/refresh-token", async (req, res) => {
     const user = await User.findOne({ where: { refresh_token: refreshToken } });
     if (!user) return res.status(401).json({ message: "Refresh token inválido" });
 
-    // Verifica validade do token
     jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, decoded) => {
       if (err) return res.status(401).json({ message: "Refresh token expirado ou inválido" });
 
-      // Gera novo access token
       const newAccessToken = jwt.sign(
         { user_id: user.user_id, email: user.email },
         process.env.JWT_SECRET,
@@ -124,7 +122,8 @@ router.post("/refresh-token", async (req, res) => {
   }
 });
 
-//  ATIVAR 2FA
+
+// Ativar 2FA
 router.post("/enable-2fa", authenticateToken, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.user_id);
@@ -141,7 +140,7 @@ router.post("/enable-2fa", authenticateToken, async (req, res) => {
     res.json({
       message: "2FA ativado com sucesso",
       qrCodeUrl,
-      secret: secret.base32, // apenas para debug
+      secret: secret.base32, // debug
     });
   } catch (err) {
     console.error("Erro ao ativar 2FA:", err);
@@ -149,7 +148,8 @@ router.post("/enable-2fa", authenticateToken, async (req, res) => {
   }
 });
 
-//  VERIFICAR 2FA
+
+// PROCEDIMENTO: Verificar 2FA
 router.post("/verify-2fa", async (req, res) => {
   try {
     const { user_id, token } = req.body;
@@ -181,7 +181,8 @@ router.post("/verify-2fa", async (req, res) => {
   }
 });
 
-// ESQUECI A SENHA
+
+// PROCEDIMENTO: Esqueci a senha
 router.post("/forgot-password", async (req, res) => {
   try {
     const { email } = req.body;
@@ -224,7 +225,8 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
-// RESETAR SENHA
+
+// Resetar senha
 router.post("/reset-password/:token", async (req, res) => {
   try {
     const { token } = req.params;
@@ -252,5 +254,26 @@ router.post("/reset-password/:token", async (req, res) => {
     res.status(500).json({ message: "Erro interno no servidor" });
   }
 });
+
+// PROCEDIMENTO: Login com Google (via JWT)
+router.get("/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get("/google/callback",
+  passport.authenticate("google", { session: false, failureRedirect: "/login" }),
+  (req, res) => {
+    const jwtToken = jwt.sign(
+      { user_id: req.user.user_id, email: req.user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({
+      message: "Login com Google realizado com sucesso!",
+      token: jwtToken
+    });
+  }
+);
 
 module.exports = router;
