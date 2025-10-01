@@ -46,12 +46,14 @@ O backend implementa fluxos completos de login, autenticação de dois fatores (
 * Senha armazenada de forma segura utilizando bcrypt.
 * Geração de token de ativação de conta enviado por e-mail.
 * Usuário só pode logar após ativar a conta.
+* Cadastro social: Google
 
 ### Login
 
 * Validação de e-mail e senha.
 * Integração com autenticação de dois fatores (2FA) via TOTP.
 * Suporte à opção "Lembrar-me" com refresh token para sessões prolongadas.
+* Login social: Google
 
 ### Autenticação de Dois Fatores (2FA)
 
