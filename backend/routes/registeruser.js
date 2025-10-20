@@ -15,8 +15,8 @@ router.post("/registeruser", async (req, res) => {
     }
 
     // Valida o tipo de usuário
-    if (!["student", "instructor"].includes(user_type)) {
-      return res.status(400).json({ message: "Tipo de usuário inválido. Use 'student' ou 'instructor'." });
+    if (!["student", "instructor", "admin"].includes(user_type)) {
+      return res.status(400).json({ message: "Tipo de usuário inválido." });
     }
 
     const hashed_password = await bcrypt.hash(password, 12);

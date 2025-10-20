@@ -7,22 +7,9 @@ const User = require("../database/models/user");
 
 const router = express.Router();
 
-/* 
-===========================================
-🔒 BLOCO DE ROTAS DE USUÁRIO
-Objetivo: permitir que admin, instrutor e aluno
-atualizem ou excluam suas contas (soft delete)
-===========================================
-*/
-
-// 🧱 Função auxiliar: define quais campos podem ser editados
+// Função auxiliar: define quais campos podem ser editados
 const editableFields = ["full_name", "email", "profile_image_url", "biography", "password_hash"];
 
-/*
------------------------------------------------------
-1️⃣ ROTA DE ADMIN — pode editar ou excluir QUALQUER conta
------------------------------------------------------
-*/
 router.put("/admin/edit/:id", authenticateToken, authorizeRoles("admin"), async (req, res) => {
   try {
     const { id } = req.params;
@@ -70,11 +57,6 @@ router.delete("/admin/delete/:id", authenticateToken, authorizeRoles("admin"), a
 });
 
 
-/*
------------------------------------------------------
-2️⃣ ROTA DE PROFESSOR — pode editar/excluir apenas a própria conta
------------------------------------------------------
-*/
 router.put("/instructor/edit", authenticateToken, authorizeRoles("instructor"), async (req, res) => {
   try {
     const user = await User.findByPk(req.user.user_id);
@@ -117,12 +99,6 @@ router.delete("/instructor/delete", authenticateToken, authorizeRoles("instructo
   }
 });
 
-
-/*
------------------------------------------------------
-3️⃣ ROTA DE ALUNO — pode editar/excluir apenas a própria conta
------------------------------------------------------
-*/
 router.put("/student/edit", authenticateToken, authorizeRoles("student"), async (req, res) => {
   try {
     const user = await User.findByPk(req.user.user_id);
