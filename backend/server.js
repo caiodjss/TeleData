@@ -1,4 +1,3 @@
-// Importações principais
 const express = require("express");
 const bodyParser = require("body-parser");
 const connection = require("./database/connection");
@@ -20,6 +19,7 @@ const home = require("./routes/home");
 const profileRouter = require("./routes/profileRoutes"); 
 const authRouter = require("./routes/authRoutes"); 
 const registeruser = require("./routes/registeruser"); 
+const userRoutes = require("./routes/userRoutes");
 
 // Sincronizando banco
 connection.sync({ alter: true })
@@ -31,6 +31,7 @@ app.use("/", home);
 app.use("/profile", profileRouter);
 app.use("/auth", authRouter);
 app.use("/", registeruser);
+app.use("/", userRoutes);
 
 // Log do servidor
 app.listen(port, () => {

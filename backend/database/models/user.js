@@ -68,7 +68,7 @@ const User = sequelize.define("User", {
   // Autenticação 2FA
   two_factor_enabled: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
+    allowNull: true,
     defaultValue: false
   },
   two_factor_secret: {

@@ -10,12 +10,12 @@ const router = express.Router();
 // Função auxiliar: define quais campos podem ser editados
 const editableFields = ["full_name", "email", "profile_image_url", "biography", "password_hash"];
 
-router.put("/admin/edit/:id", authenticateToken, authorizeRoles("admin"), async (req, res) => {
+router.put("/admin/edit/:email", authenticateToken, authorizeRoles("admin"), async (req, res) => {
   try {
-    const { id } = req.params;
+    const { email } = req.params;
     const updates = req.body;
 
-    const user = await User.findByPk(id);
+    const user = await User.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
 
     // Se for mudar a senha, criptografar
@@ -39,11 +39,11 @@ router.put("/admin/edit/:id", authenticateToken, authorizeRoles("admin"), async 
 });
 
 // Soft delete (admin)
-router.delete("/admin/delete/:id", authenticateToken, authorizeRoles("admin"), async (req, res) => {
+router.delete("/admin/delete/:email", authenticateToken, authorizeRoles("admin"), async (req, res) => {
   try {
-    const { id } = req.params;
+    const { email } = req.params;
 
-    const user = await User.findByPk(id);
+    const user = await User.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
 
     user.deleted_at = new Date();
@@ -59,7 +59,7 @@ router.delete("/admin/delete/:id", authenticateToken, authorizeRoles("admin"), a
 
 router.put("/instructor/edit", authenticateToken, authorizeRoles("instructor"), async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.user_id);
+    const user = await User.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
 
     const updates = req.body;
@@ -86,7 +86,7 @@ router.put("/instructor/edit", authenticateToken, authorizeRoles("instructor"), 
 // Soft delete (instrutor)
 router.delete("/instructor/delete", authenticateToken, authorizeRoles("instructor"), async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.user_id);
+    const user = await User.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
 
     user.deleted_at = new Date();
@@ -101,7 +101,7 @@ router.delete("/instructor/delete", authenticateToken, authorizeRoles("instructo
 
 router.put("/student/edit", authenticateToken, authorizeRoles("student"), async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.user_id);
+    const user = await User.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
 
     const updates = req.body;
@@ -128,7 +128,7 @@ router.put("/student/edit", authenticateToken, authorizeRoles("student"), async 
 // Soft delete (estudante)
 router.delete("/student/delete", authenticateToken, authorizeRoles("student"), async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.user_id);
+    const user = await User.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
 
     user.deleted_at = new Date();

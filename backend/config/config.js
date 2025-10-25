@@ -11,8 +11,8 @@ module.exports = {
   },
   jwtSecret: process.env.JWT_SECRET || "producao",
   email: {
-    user: process.env.EMAIL_USER || "caio.moomo@gmail.com",
-    pass: process.env.EMAIL_PASS || "tbgc kcud tpjo wqeq",
+    user: process.env.EMAIL_USER || "plusintelteledata@gmail.comcaio.moomo@gmail.com",
+    pass: process.env.EMAIL_PASS || "fjtn pzyc lvvb layd",
   },
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || "producao_refresh",
 };

@@ -11,12 +11,12 @@ router.post("/registeruser", async (req, res) => {
     const { name, email, password, user_type } = req.body;
 
     if (!name || !email || !password || !user_type) {
-      return res.status(400).send("Preencha todos os campos obrigatórios (nome, email, senha e tipo de usuário)");
+      return res.status(400).send("ERRO 400");
     }
 
     // Valida o tipo de usuário
     if (!["student", "instructor", "admin"].includes(user_type)) {
-      return res.status(400).json({ message: "Tipo de usuário inválido." });
+      return res.status(400).json({ message: "ERRO 400" });
     }
 
     const hashed_password = await bcrypt.hash(password, 12);
@@ -50,7 +50,6 @@ router.post("/registeruser", async (req, res) => {
       subject: "Ative sua conta TeleData",
       html: `
         <p>Olá ${name}, bem-vindo ao TeleData!</p>
-        <p>Você se registrou como <strong>${user_type === "student" ? "Estudante" : "Professor"}</strong>.</p>
         <p>Clique no link abaixo para ativar sua conta:</p>
         <a href="${activationLink}">${activationLink}</a>
         <p>O link expira em 24 horas.</p>
@@ -65,7 +64,7 @@ router.post("/registeruser", async (req, res) => {
 
   } catch (err) {
     console.error("Erro ao registrar usuário:", err);
-    return res.status(500).json({ error: "Erro ao registrar usuário" });
+    return res.status(500).json({ error: "ERRO 500" });
   }
 });
 
