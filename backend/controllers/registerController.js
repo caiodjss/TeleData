@@ -1,12 +1,10 @@
-const express = require("express");
-const router = express.Router();
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const User = require("../database/models/user");
 const config = require("../config/config");
 
-router.post("/registeruser", async (req, res) => {
+exports.registerUser = async (req, res) => {
   try {
     const { name, email, password, user_type } = req.body;
 
@@ -14,7 +12,6 @@ router.post("/registeruser", async (req, res) => {
       return res.status(400).send("ERRO 400");
     }
 
-    // Valida o tipo de usuário
     if (!["student", "instructor", "admin"].includes(user_type)) {
       return res.status(400).json({ message: "ERRO 400" });
     }
@@ -22,7 +19,7 @@ router.post("/registeruser", async (req, res) => {
     const hashed_password = await bcrypt.hash(password, 12);
 
     const activationToken = crypto.randomBytes(32).toString("hex");
-    const activationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // expira em 24h
+    const activationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     const newUser = await User.create({
       full_name: name,
@@ -58,14 +55,12 @@ router.post("/registeruser", async (req, res) => {
 
     console.log(`Usuário ${name} (${email}) cadastrado como ${user_type}. Token enviado para ativação.`);
 
-    return res.status(201).json({ 
-      message: "Usuário criado com sucesso! Verifique seu e-mail para ativar a conta." 
+    return res.status(201).json({
+      message: "Usuário criado com sucesso! Verifique seu e-mail para ativar a conta."
     });
 
   } catch (err) {
     console.error("Erro ao registrar usuário:", err);
     return res.status(500).json({ error: "ERRO 500" });
   }
-});
-
-module.exports = router;
+};

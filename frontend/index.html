@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrativo</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Menu lateral -->
+    <div class="sidebar">
+        <div class="logo">
+            <!-- Logo da aplicação com ícone e nome -->
+            <h3><i class="fas fa-graduation-cap"></i> Administrador </h3>
+        </div>
+        <!-- Item de navegação para o Dashboard -->
+        <div class="nav-item active" onclick="showSection('dashboard')">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard</span>
+        </div>
+        <!-- Item de navegação com submenu para Usuários -->
+        <div class="nav-item" onclick="toggleSubmenu(event)">
+            <i class="fas fa-users"></i>
+            <span>Usuários</span>
+            <i class="fas fa-chevron-right arrow"></i>
+        </div>
+        <!-- Submenu para categorias de usuários -->
+        <div class="nav-submenu" id="users-submenu">
+            <div class="nav-subitem" onclick="showSection('students', event)">
+                <i class="fas fa-user-graduate"></i>
+                <span>Estudantes</span>
+            </div>
+            <div class="nav-subitem" onclick="showSection('teachers', event)">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <span>Docentes</span>
+            </div>
+            <div class="nav-subitem" onclick="showSection('admins', event)">
+                <i class="fas fa-user-shield"></i>
+                <span>Administradores</span>
+            </div>
+        </div>
+        <!-- Item de navegação para Relatórios -->
+        <div class="nav-item" onclick="showSection('reports')">
+            <i class="fas fa-file-alt"></i>
+            <span>Relatórios</span>
+        </div>
+        <!-- Item de navegação para Chamados -->
+        <div class="nav-item" onclick="showSection('called')">
+            <i class="fa-solid fa-tty"></i> <span>Chamados</span>
+        </div>
+        <!-- Item de navegação para Configurações -->
+        <div class="nav-item" onclick="showSection('settings')">
+            <i class="fas fa-cog"></i>
+            <span>Configurações</span>
+        </div>
+        <div class="nav-item" onclick="showSection('profile')">
+            <i class="fa-solid fa-circle-user"></i>
+            <span>Perfil</span>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <h4 id="page-title">Dashboard Geral</h4>
+            <div class="user-info">
+                <div>
+                    <div style="font-weight: 600; color: var(--secondary-color);">Admin User</div>
+                    <div style="font-size: 12px; color: #64748b;">Administrador</div>
+                </div>
+                <div class="user-avatar">AD</div>
+            </div>
+        </div>
+
+        <div id="dashboard-section">
+            <!-- Métricas Principais -->
+            <div class="dashboard-grid">
+                <!-- Total de Usuários -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="metric-title">Total de Usuários</div>
+                    </div>
+                    <div class="metric-value">1248</div>
+                    <div class="progress-bar-custom">
+                        <div class="progress-fill blue" style="width: 75%"></div>
+                    </div>
+                    <div class="progress-label">75% da meta</div>
+                    <div class="metric-footer">
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>desde 13/09</span>
+                        </div>
+                        <div class="metric-status status-growth">Crescimento</div>
+                    </div>
+                </div>
+
+                <!-- Sessões Ativas -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fas fa-circle-notch"></i>
+                        </div>
+                        <div class="metric-title">Sessões Ativas</div>
+                    </div>
+                    <div class="metric-value">84</div>
+                    <div class="progress-bar-custom">
+                        <div class="progress-fill blue" style="width: 42%"></div>
+                    </div>
+                    <div class="progress-label">42% de capacidade</div>
+                    <div class="metric-footer">
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>desde 05/09</span>
+                        </div>
+                        <div class="metric-status status-stable">Estável</div>
+                    </div>
+                </div>
+
+                <!-- Taxa de Erros -->
+                <div class="metric-card error">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="metric-title">Taxa de Erros</div>
+                    </div>
+                    <div class="metric-value">2.3<span class="unit">%</span></div>
+                    <div class="progress-bar-custom">
+                        <div class="progress-fill red" style="width: 23%"></div>
+                    </div>
+                    <div class="progress-label">23% do limite</div>
+                    <div class="metric-footer">
+                        <div class="metric-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>desde 05/09</span>
+                        </div>
+                        <div class="metric-status status-warning">Atenção</div>
+                    </div>
+                </div>
+
+                <!-- Tempo de Resposta -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="metric-title">Tempo de Resposta</div>
+                    </div>
+                    <div class="metric-value">320<span class="unit">ms</span></div>
+                    <div class="progress-bar-custom">
+                        <div class="progress-fill blue" style="width: 64%"></div>
+                    </div>
+                    <div class="progress-label">64% do máximo</div>
+                    <div class="metric-footer">
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>desde 06/09</span>
+                        </div>
+                        <div class="metric-status status-optimal">Ótimo</div>
+                    </div>
+                </div>
+
+                <!-- Satisfação do Usuário -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-icon">
+                            <i class="fas fa-smile"></i>
+                        </div>
+                        <div class="metric-title">Satisfação do Usuário</div>
+                    </div>
+                    <div class="metric-value">4.7<span class="unit">/5</span></div>
+                    <div class="progress-bar-custom">
+                        <div class="progress-fill blue" style="width: 94%"></div>
+                    </div>
+                    <div class="progress-label">94% de satisfação</div>
+                    <div class="metric-footer">
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+0.2 este mês</span>
+                        </div>
+                        <div class="metric-status status-excellent">Excelente</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="row">
+                <!-- Distribuição de Perfis -->
+                <div class="col-lg-4">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="chart-title">Distribuição de perfis do sistema</div>
+                        </div>
+                        <div class="chart-container" style="height: 280px;">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quantidade de Cursos -->
+                <div class="col-lg-8">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="chart-title">Quantidade de cursos adiquiridos por estudantes</div>
+                        </div>
+                        <div class="chart-container" style="height: 280px;">
+                            <canvas id="coursesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de usuários recentes -->
+            <div class="section recent-users">
+                <div class="section-header recent-users-header">
+                    <h2 class="section-title recent-users-title">Usuários Recentes</h2>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Data de Cadastro</th>
+                            <th>Tipo de Perfil</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>João Silva</td>
+                            <td>joao.silva@empresa.com</td>
+                            <td>20/09/2023</td>
+                            <td>Docente</td>
+                            <td><span class="status-active">Ativo</span></td>
+                        </tr>
+                        <tr>
+                            <td>Maria Santos</td>
+                            <td>maria.santos@empresa.com</td>
+                            <td>19/09/2023</td>
+                            <td>Administrador(a)</td>
+                            <td><span class="status-inactive">Inativo</span></td>
+                        </tr>
+                        <tr>
+                            <td>Pedro Oliveira</td>
+                            <td>pedro.oliveira@empresa.com</td>
+                            <td>18/09/2023</td>
+                            <td>Estudante</td>
+                            <td><span class="status-active">Ativo</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="students-section" style="display: none;">
+            <div class="content-section">
+                <div class="section-header">
+                    <h5><i class="fas fa-user-graduate"></i> Gerenciar Estudantes</h5>
+                    <button class="btn-primary-custom" onclick="openAddStudentModal()">
+                        <i class="fas fa-plus"></i> Adicionar Estudante
+                    </button>
+                </div>
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Cursos Inscritos</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Maria Silva</td>
+                            <td>maria.silva@email.com</td>
+                            <td>5</td>
+                            <td><span class="badge-custom badge-active">Ativo</span></td>
+                            <td>
+                                <button class="action-btn"
+                                    onclick="openEditStudentModal('Maria Silva', 'maria.silva@email.com', '5', 'Ativo')"
+                                    title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn" title="Visualizar"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn" title="Excluir"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Pedro Oliveira</td>
+                            <td>pedro.oliveira@email.com</td>
+                            <td>3</td>
+                            <td><span class="badge-custom badge-active">Ativo</span></td>
+                            <td>
+                                <button class="action-btn"
+                                    onclick="openEditStudentModal('Pedro Oliveira', 'pedro.oliveira@email.com', '3', 'Ativo')"
+                                    title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn" title="Visualizar"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn" title="Excluir"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ana Costa</td>
+                            <td>ana.costa@email.com</td>
+                            <td>8</td>
+                            <td><span class="badge-custom badge-active">Ativo</span></td>
+                            <td>
+                                <button class="action-btn"
+                                    onclick="openEditStudentModal('Ana Costa', 'ana.costa@email.com', '8', 'Ativo')"
+                                    title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn" title="Visualizar"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn" title="Excluir"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="teachers-section" style="display: none;">
+            <div class="content-section">
+                <div class="section-header">
+                    <h5><i class="fas fa-chalkboard-teacher"></i> Gerenciar Docentes</h5>
+                    <button class="btn-primary-custom" onclick="openAddTeacherModal()">
+                        <i class="fas fa-plus"></i> Adicionar Docente
+                    </button>
+                </div>
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Cursos Criados</th>
+                            <th>Avaliação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>João Santos</td>
+                            <td>joao.santos@email.com</td>
+                            <td>12</td>
+                            <td>⭐ 4.8</td>
+                            <td>
+                                <button class="action-btn"
+                                    onclick="openEditTeacherModal('João Santos', 'joao.santos@email.com', '12', '4.8', 'Ativo')"
+                                    title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn" title="Visualizar"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn" title="Excluir"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Carla Mendes</td>
+                            <td>carla.mendes@email.com</td>
+                            <td>8</td>
+                            <td>⭐ 4.9</td>
+                            <td>
+                                <button class="action-btn"
+                                    onclick="openEditTeacherModal('Carla Mendes', 'carla.mendes@email.com', '8', '4.9', 'Ativo')"
+                                    title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn" title="Visualizar"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn" title="Excluir"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Roberto Lima</td>
+                            <td>roberto.lima@email.com</td>
+                            <td>15</td>
+                            <td>⭐ 4.7</td>
+                            <td>
+                                <button class="action-btn"
+                                    onclick="openEditTeacherModal('Roberto Lima', 'roberto.lima@email.com', '15', '4.7', 'Ativo')"
+                                    title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn" title="Visualizar"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn" title="Excluir"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="admins-section" style="display: none;">
+            <div class="content-section">
+                <div class="section-header">
+                    <h5><i class="fas fa-user-shield"></i> Gerenciar Administradores</h5>
+                    <button class="btn-primary-custom" onclick="openAddAdminModal()">
+                        <i class="fas fa-plus"></i> Adicionar Administrador
+                    </button>
+                </div>
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Nível de Acesso</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Admin User</td>
+                            <td>admin@email.com</td>
+                            <td>Super Admin</td>
+                            <td><span class="badge-custom badge-active">Ativo</span></td>
+                            <td>
+                                <button class="action-btn"
+                                    onclick="openEditModal('Admin User', 'admin@email.com', 'Super Admin', 'Ativo')"
+                                    title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn" title="Visualizar"><i class="fas fa-eye"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Carlos Alberto</td>
+                            <td>carlos.alberto@email.com</td>
+                            <td>Moderador</td>
+                            <td><span class="badge-custom badge-active">Ativo</span></td>
+                            <td>
+                                <button class="action-btn"
+                                    onclick="openEditModal('Carlos Alberto', 'carlos.alberto@email.com', 'Moderador', 'Ativo')"
+                                    title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn" title="Visualizar"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn" title="Excluir"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Fernanda Dias</td>
+                            <td>fernanda.dias@email.com</td>
+                            <td>Suporte</td>
+                            <td><span class="badge-custom badge-active">Ativo</span></td>
+                            <td>
+                                <button class="action-btn"
+                                    onclick="openEditModal('Fernanda Dias', 'fernanda.dias@email.com', 'Suporte', 'Ativo')"
+                                    title="Editar"><i class="fas fa-edit"></i></button>
+                                <button class="action-btn" title="Visualizar"><i class="fas fa-eye"></i></button>
+                                <button class="action-btn" title="Excluir"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="called-section" style="display: none;">
+            <div class="content-section">
+                <!-- Header com filtros -->
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px;">
+                    <!-- Barra de pesquisa -->
+                    <div style="flex: 1; max-width: 300px;">
+                        <input type="text" id="search-called" placeholder="Pesquisar..."
+                            style="width: 100%; padding: 10px 15px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px;">
+                    </div>
+
+                    <!-- Botões de ação -->
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-icon" title="Atualizar">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Abas de filtro -->
+                <div
+                    style="border-bottom: 2px solid #e2e8f0; margin-bottom: 20px; overflow-x: auto; white-space: nowrap;">
+                    <div style="display: inline-flex; gap: 5px;">
+                        <button class="tab-button" data-status="todos">Todos</button>
+                        <button class="tab-button" data-status="pedido_curso">Pedidos de Curso</button>
+                        <button class="tab-button" data-status="reclamacao">Reclamações</button>
+                        <button class="tab-button" data-status="aberto">Em Aberto</button>
+                        <button class="tab-button" data-status="cancelado">Cancelado</button>
+                        <button class="tab-button" data-status="finalizado">Finalizado</button>
+                    </div>
+                </div>
+
+                <!-- Tabela de chamados -->
+                <div
+                    style="background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden;">
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+                                    <th
+                                        style="padding: 12px 15px; text-align: left; font-size: 13px; font-weight: 600; color: #475569;">
+                                        Código</th>
+                                    <th
+                                        style="padding: 12px 15px; text-align: left; font-size: 13px; font-weight: 600; color: #475569;">
+                                        Criação</th>
+                                    <th
+                                        style="padding: 12px 15px; text-align: left; font-size: 13px; font-weight: 600; color: #475569;">
+                                        St.</th>
+                                    <th
+                                        style="padding: 12px 15px; text-align: left; font-size: 13px; font-weight: 600; color: #475569;">
+                                        Assunto</th>
+                                    <th
+                                        style="padding: 12px 15px; text-align: left; font-size: 13px; font-weight: 600; color: #475569;">
+                                        Pretensão de Lanç.</th>
+                                    <th
+                                        style="padding: 12px 15px; text-align: left; font-size: 13px; font-weight: 600; color: #475569;">
+                                        Solicitante</th>
+                                    <th
+                                        style="padding: 12px 15px; text-align: left; font-size: 13px; font-weight: 600; color: #475569;">
+                                        Categoria</th>
+                                    <th
+                                        style="padding: 12px 15px; text-align: left; font-size: 13px; font-weight: 600; color: #475569;">
+                                        Qntd. de Anexos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="called-table-body">
+                                <!-- Exemplo de linha -->
+                                <tr style="border-bottom: 1px solid #e2e8f0;">
+                                    <td style="padding: 15px; font-size: 14px; color: #1e293b; font-weight: 500;">
+                                        0821-00040</td>
+                                    <td style="padding: 15px; font-size: 13px; color: #64748b;">
+                                        15-10-2025<br>
+                                        <span style="color: #94a3b8; font-size: 12px;">14:13</span>
+                                    </td>
+                                    <td style="padding: 15px;">
+                                        <i class="fas fa-solid fa-spinner" style="color: #3b82f6;" title="Status"></i>
+                                    </td>
+                                    <td style="padding: 15px; font-size: 13px; color: #1e293b; max-width: 300px;">
+                                        <div style="font-weight: 500; margin-bottom: 3px;">ELETRÔNICA - RELOGIO -
+                                            DIGITAL - RDP.RDP.SOD.ATR.DIS.DIS C E207</div>
+                                        <div style="color: #64748b; font-size: 12px;">WEBHOOK Atendosamente, Adilan
+                                            Santos Support Analyst (II)</div>
+                                    </td>
+                                    <td style="padding: 15px; font-size: 13px;">
+                                        <div style="display: flex; align-items: center; gap: 5px;">
+                                            <i class="fas fa-play" style="color: #22c55e; font-size: 10px;"></i>
+                                            <span style="color: #1e293b; font-weight: 500;">28-10-2025</span>
+                                        </div>
+                                        <div style="margin-top: 5px; font-size: 12px; color: #64748b;">
+                                            09:15
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px; font-size: 13px;">
+                                        <div style="color: #1e293b; font-weight: 500;">Adilan Santos</div>
+                                        <div style="color: #64748b; font-size: 12px;">adilan.s.santos@docente.com</div>
+                                    </td>
+                                    <td style="padding: 15px; font-size: 13px; color: #64748b;">Eletroeletrônica</td>
+                                    <td style="padding: 15px; text-align: center;">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Mensagem quando não há dados -->
+                    <div id="no-called-message" style="display: none; text-align: center; padding: 60px 20px;">
+                        <i class="fas fa-inbox" style="font-size: 48px; color: #cbd5e1; margin-bottom: 15px;"></i>
+                        <p style="color: #64748b; font-size: 16px;">Nenhum chamado encontrado</p>
+                    </div>
+                </div>
+
+                <!-- Paginação -->
+                <div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px;">
+                    <button class="btn-icon" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span style="color: #64748b; font-size: 14px;">1/1</span>
+                    <button class="btn-icon" disabled>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Botão flutuante para adicionar chamado -->
+            <button class="btn-floating" onmouseover="this.style.transform='scale(1.1)'"
+                onmouseout="this.style.transform='scale(1)'" onclick="openNewCalledModal()">
+                <i class="fas fa-plus" style="font-size: 24px;"></i>
+            </button>
+        </div>
+
+        <div id="settings-section" style="display: none;">
+            <div class="content-section">
+                <h5 style="color: #1e293b; font-weight: 600; margin-bottom: 25px;">
+                    <i class="fas fa-cog"></i> Configurações do Sistema
+                </h5>
+
+                <div class="dashboard-grid">
+                    <!-- Configurações Gerais -->
+                    <div class="metric-card" style="cursor: pointer; border-left-color: #3b82f6;"
+                        onclick="openConfigModal('general')">
+                        <div class="metric-header">
+                            <div class="metric-icon">
+                                <i class="fas fa-sliders-h"></i>
+                            </div>
+                            <div class="metric-title">Configurações Gerais</div>
+                        </div>
+                        <p style="color: #64748b; font-size: 14px; margin: 15px 0 20px;">
+                            Defina as configurações básicas do sistema
+                        </p>
+                        <button class="btn-primary-custom" style="width: 100%;">
+                            <i class="fas fa-cog"></i> Configurar
+                        </button>
+                    </div>
+
+                    <!-- Preferências de Notificação -->
+                    <div class="metric-card" style="cursor: pointer; border-left-color: #8b5cf6;"
+                        onclick="openConfigModal('notifications')">
+                        <div class="metric-header">
+                            <div class="metric-icon">
+                                <i class="fas fa-bell"></i>
+                            </div>
+                            <div class="metric-title">Preferências de Notificação</div>
+                        </div>
+                        <p style="color: #64748b; font-size: 14px; margin: 15px 0 20px;">
+                            Configure como receber notificações
+                        </p>
+                        <button class="btn-primary-custom" style="width: 100%;">
+                            <i class="fas fa-cog"></i> Configurar
+                        </button>
+                    </div>
+
+                    <!-- Configurações de Segurança -->
+                    <div class="metric-card" style="cursor: pointer; border-left-color: #ef4444;"
+                        onclick="openConfigModal('security')">
+                        <div class="metric-header">
+                            <div class="metric-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="metric-title">Configurações de Segurança</div>
+                        </div>
+                        <p style="color: #64748b; font-size: 14px; margin: 15px 0 20px;">
+                            Gerencie as políticas de segurança
+                        </p>
+                        <button class="btn-primary-custom" style="width: 100%;">
+                            <i class="fas fa-cog"></i> Configurar
+                        </button>
+                    </div>
+
+                    <!-- Backup Automático -->
+                    <div class="metric-card" style="cursor: pointer; border-left-color: #10b981;"
+                        onclick="openConfigModal('backup')">
+                        <div class="metric-header">
+                            <div class="metric-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div class="metric-title">Backup Automático</div>
+                        </div>
+                        <p style="color: #64748b; font-size: 14px; margin: 15px 0 20px;">
+                            Configure backups automáticos do sistema
+                        </p>
+                        <button class="btn-primary-custom" style="width: 100%;">
+                            <i class="fas fa-cog"></i> Configurar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Perfil -->
+        <div id="profile-section" style="display: none;">
+            <div class="content-section">
+                <div class="profile-container">
+                    <!-- Header do Perfil -->
+                    <div class="profile-header">
+                        <div class="profile-avatar-large">
+                            <span>AD</span>
+                            <button class="avatar-edit-btn" onclick="changeAvatar()">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                        <div class="profile-header-info">
+                            <h2>Admin User</h2>
+                            <p>admin@email.com</p>
+                            <span class="profile-role-badge">Super Administrador</span>
+                        </div>
+                    </div>
+
+                    <!-- Grid de Informações -->
+                    <div class="dashboard-grid" style="margin-top: 30px;">
+                        <!-- Informações Pessoais -->
+                        <div class="metric-card" style="border-left-color: #3b82f6;">
+                            <div class="metric-header">
+                                <div class="metric-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="metric-title">Informações Pessoais</div>
+                            </div>
+                            <div class="profile-info-list">
+                                <div class="profile-info-item">
+                                    <i class="fas fa-id-card"></i>
+                                    <div>
+                                        <span class="info-label">Nome Completo</span>
+                                        <span class="info-value">Admin User</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <div>
+                                        <span class="info-label">Email</span>
+                                        <span class="info-value">admin@email.com</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-item">
+                                    <i class="fas fa-phone"></i>
+                                    <div>
+                                        <span class="info-label">Telefone</span>
+                                        <span class="info-value">(71) 99999-9999</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <div>
+                                        <span class="info-label">Data de Cadastro</span>
+                                        <span class="info-value">15/01/2023</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn-primary-custom" style="width: 100%; margin-top: 15px;"
+                                onclick="openEditProfileModal()">
+                                <i class="fas fa-edit"></i> Editar Informações
+                            </button>
+                        </div>
+
+                        <!-- Segurança -->
+                        <div class="metric-card" style="border-left-color: #ef4444;">
+                            <div class="metric-header">
+                                <div class="metric-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="metric-title">Segurança</div>
+                            </div>
+                            <div class="profile-info-list">
+                                <div class="profile-info-item">
+                                    <i class="fas fa-lock"></i>
+                                    <div>
+                                        <span class="info-label">Senha</span>
+                                        <span class="info-value">••••••••</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-item">
+                                    <i class="fas fa-clock"></i>
+                                    <div>
+                                        <span class="info-label">Última Alteração</span>
+                                        <span class="info-value">10/10/2025</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-item">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    <div>
+                                        <span class="info-label">Autenticação 2FA</span>
+                                        <span class="info-value"
+                                            style="color: #10b981; font-weight: 600;">Ativada</span>
+                                    </div>
+                                </div>
+                                <div class="profile-info-item">
+                                    <i class="fas fa-history"></i>
+                                    <div>
+                                        <span class="info-label">Último Acesso</span>
+                                        <span class="info-value">Hoje, 14:23</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn-primary-custom" style="width: 100%; margin-top: 15px;"
+                                onclick="openChangePasswordModal()">
+                                <i class="fas fa-key"></i> Alterar Senha
+                            </button>
+                        </div>
+
+                        <!-- Estatísticas -->
+                        <div class="metric-card" style="border-left-color: #8b5cf6;">
+                            <div class="metric-header">
+                                <div class="metric-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <div class="metric-title">Estatísticas</div>
+                            </div>
+                            <div class="profile-stats-grid">
+                                <div class="profile-stat-item">
+                                    <i class="fas fa-clipboard-list"></i>
+                                    <div class="stat-value">247</div>
+                                    <div class="stat-label">Ações Realizadas</div>
+                                </div>
+                                <div class="profile-stat-item">
+                                    <i class="fas fa-clock"></i>
+                                    <div class="stat-value">18h</div>
+                                    <div class="stat-label">Tempo Online</div>
+                                </div>
+                                <div class="profile-stat-item">
+                                    <i class="fas fa-users"></i>
+                                    <div class="stat-value">1335</div>
+                                    <div class="stat-label">Usuários Gerenciados</div>
+                                </div>
+                                <div class="profile-stat-item">
+                                    <i class="fas fa-tasks"></i>
+                                    <div class="stat-value">52</div>
+                                    <div class="stat-label">Chamados Atendidos</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preferências -->
+                        <div class="metric-card" style="border-left-color: #10b981;">
+                            <div class="metric-header">
+                                <div class="metric-icon">
+                                    <i class="fas fa-cog"></i>
+                                </div>
+                                <div class="metric-title">Preferências</div>
+                            </div>
+                            <div class="profile-preferences">
+                                <div class="preference-item">
+                                    <div class="preference-info">
+                                        <i class="fas fa-bell"></i>
+                                        <span>Notificações por Email</span>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="preference-item">
+                                    <div class="preference-info">
+                                        <i class="fas fa-moon"></i>
+                                        <span>Modo Escuro</span>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="preference-item">
+                                    <div class="preference-info">
+                                        <i class="fas fa-language"></i>
+                                        <span>Idioma</span>
+                                    </div>
+                                    <select class="preference-select">
+                                        <option selected>Português (BR)</option>
+                                        <option>English</option>
+                                        <option>Español</option>
+                                    </select>
+                                </div>
+                                <div class="preference-item">
+                                    <div class="preference-info">
+                                        <i class="fas fa-globe"></i>
+                                        <span>Fuso Horário</span>
+                                    </div>
+                                    <select class="preference-select">
+                                        <option selected>GMT-3 (Brasília)</option>
+                                        <option>GMT-5 (Nova York)</option>
+                                        <option>GMT+0 (Londres)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Atividades Recentes -->
+                        <div class="metric-card" style="border-left-color: #f59e0b; grid-column: span 2;">
+                            <div class="metric-header">
+                                <div class="metric-icon">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <div class="metric-title">Atividades Recentes</div>
+                            </div>
+                            <div class="activity-timeline">
+                                <div class="activity-item">
+                                    <div class="activity-icon" style="background: #3b82f6;">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Novo estudante cadastrado</div>
+                                        <div class="activity-description">Você adicionou Maria Silva ao sistema</div>
+                                        <div class="activity-time">Há 2 horas</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon" style="background: #10b981;">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Chamado finalizado</div>
+                                        <div class="activity-description">Chamado #0821-00042 foi concluído</div>
+                                        <div class="activity-time">Há 5 horas</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon" style="background: #f59e0b;">
+                                        <i class="fas fa-edit"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Configurações atualizadas</div>
+                                        <div class="activity-description">Você alterou as preferências de notificação
+                                        </div>
+                                        <div class="activity-time">Ontem às 16:30</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon" style="background: #8b5cf6;">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Senha alterada</div>
+                                        <div class="activity-description">Sua senha foi modificada com sucesso</div>
+                                        <div class="activity-time">10/10/2025 às 10:15</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Editar Perfil -->
+    <div class="modal-overlay" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-edit"></i> Editar Perfil</h3>
+                <button class="modal-close" onclick="closeEditProfileModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label for="profile-name">Nome Completo</label>
+                        <input type="text" id="profile-name" value="Admin User" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-email">Email</label>
+                        <input type="email" id="profile-email" value="admin@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-phone">Telefone</label>
+                        <input type="tel" id="profile-phone" value="(71) 99999-9999" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeEditProfileModal()">Cancelar</button>
+                <button class="btn-save" onclick="saveProfileChanges()">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Alterar Senha -->
+    <div class="modal-overlay" id="changePasswordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-key"></i> Alterar Senha</h3>
+                <button class="modal-close" onclick="closeChangePasswordModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="current-password">Senha Atual</label>
+                        <input type="password" id="current-password" placeholder="Digite sua senha atual" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">Nova Senha</label>
+                        <input type="password" id="new-password" placeholder="Digite a nova senha" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirmar Nova Senha</label>
+                        <input type="password" id="confirm-password" placeholder="Confirme a nova senha" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeChangePasswordModal()">Cancelar</button>
+                <button class="btn-save" onclick="savePasswordChanges()">
+                    <i class="fas fa-save"></i> Alterar Senha
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Restante dos modais existentes... -->
+
+    <!-- Modal de Edição -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Editar Administrador</h3>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="form-group">
+                        <label for="edit-name">Nome Completo</label>
+                        <input type="text" id="edit-name" placeholder="Digite o nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">Email</label>
+                        <input type="email" id="edit-email" placeholder="Digite o email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-access">Nível de Acesso</label>
+                        <select id="edit-access" required>
+                            <option value="">Selecione o nível de acesso</option>
+                            <option value="Super Admin">Super Admin</option>
+                            <option value="Moderador">Moderador</option>
+                            <option value="Suporte">Suporte</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-status">Status</label>
+                        <select id="edit-status" required>
+                            <option value="Ativo">Ativo</option>
+                            <option value="Inativo">Inativo</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+                <button class="btn-save" onclick="saveChanges()">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Estudante -->
+    <div class="modal-overlay" id="editStudentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-graduate"></i> Editar Estudante</h3>
+                <button class="modal-close" onclick="closeEditStudentModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editStudentForm">
+                    <div class="form-group">
+                        <label for="edit-student-name">Nome Completo</label>
+                        <input type="text" id="edit-student-name" placeholder="Digite o nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-student-email">Email</label>
+                        <input type="email" id="edit-student-email" placeholder="Digite o email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-student-courses">Cursos Inscritos</label>
+                        <input type="number" id="edit-student-courses" placeholder="Número de cursos" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-student-status">Status</label>
+                        <select id="edit-student-status" required>
+                            <option value="Ativo">Ativo</option>
+                            <option value="Inativo">Inativo</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeEditStudentModal()">Cancelar</button>
+                <button class="btn-save" onclick="saveStudentChanges()">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Docente -->
+    <div class="modal-overlay" id="editTeacherModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-chalkboard-teacher"></i> Editar Docente</h3>
+                <button class="modal-close" onclick="closeEditTeacherModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editTeacherForm">
+                    <div class="form-group">
+                        <label for="edit-teacher-name">Nome Completo</label>
+                        <input type="text" id="edit-teacher-name" placeholder="Digite o nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-teacher-email">Email</label>
+                        <input type="email" id="edit-teacher-email" placeholder="Digite o email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-teacher-courses">Cursos Criados</label>
+                        <input type="number" id="edit-teacher-courses" placeholder="Número de cursos criados" min="0"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-teacher-rating">Avaliação</label>
+                        <input type="number" id="edit-teacher-rating" placeholder="Avaliação (0 a 5)" min="0" max="5"
+                            step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-teacher-status">Status</label>
+                        <select id="edit-teacher-status" required>
+                            <option value="Ativo">Ativo</option>
+                            <option value="Inativo">Inativo</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeEditTeacherModal()">Cancelar</button>
+                <button class="btn-save" onclick="saveTeacherChanges()">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Adicionar Administrador -->
+    <div class="modal-overlay" id="addAdminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Adicionar Administrador</h3>
+                <button class="modal-close" onclick="closeAddAdminModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addAdminForm">
+                    <div class="form-group">
+                        <label for="add-admin-name">Nome Completo</label>
+                        <input type="text" id="add-admin-name" placeholder="Digite o nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-admin-email">Email</label>
+                        <input type="email" id="add-admin-email" placeholder="Digite o email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-admin-password">Senha</label>
+                        <input type="password" id="add-admin-password" placeholder="Digite a senha" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-admin-access">Nível de Acesso</label>
+                        <select id="add-admin-access" required>
+                            <option value="">Selecione o nível de acesso</option>
+                            <option value="Super Admin">Super Admin</option>
+                            <option value="Moderador">Moderador</option>
+                            <option value="Suporte">Suporte</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeAddAdminModal()">Cancelar</button>
+                <button class="btn-save" onclick="saveNewAdmin()">
+                    <i class="fas fa-user-plus"></i> Adicionar Administrador
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Adicionar Estudante -->
+    <div class="modal-overlay" id="addStudentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Adicionar Estudante</h3>
+                <button class="modal-close" onclick="closeAddStudentModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addStudentForm">
+                    <div class="form-group">
+                        <label for="add-student-name">Nome Completo</label>
+                        <input type="text" id="add-student-name" placeholder="Digite o nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-student-email">Email</label>
+                        <input type="email" id="add-student-email" placeholder="Digite o email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-student-password">Senha</label>
+                        <input type="password" id="add-student-password" placeholder="Digite a senha" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-student-courses">Cursos Inscritos</label>
+                        <input type="number" id="add-student-courses" placeholder="Número de cursos" min="0" value="0"
+                            required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeAddStudentModal()">Cancelar</button>
+                <button class="btn-save" onclick="saveNewStudent()">
+                    <i class="fas fa-user-plus"></i> Adicionar Estudante
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Adicionar Docente -->
+    <div class="modal-overlay" id="addTeacherModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Adicionar Docente</h3>
+                <button class="modal-close" onclick="closeAddTeacherModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addTeacherForm">
+                    <div class="form-group">
+                        <label for="add-teacher-name">Nome Completo</label>
+                        <input type="text" id="add-teacher-name" placeholder="Digite o nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-teacher-email">Email</label>
+                        <input type="email" id="add-teacher-email" placeholder="Digite o email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-teacher-password">Senha</label>
+                        <input type="password" id="add-teacher-password" placeholder="Digite a senha" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-teacher-courses">Cursos Criados</label>
+                        <input type="number" id="add-teacher-courses" placeholder="Número de cursos criados" min="0"
+                            value="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-teacher-rating">Avaliação Inicial</label>
+                        <input type="number" id="add-teacher-rating" placeholder="Avaliação (0 a 5)" min="0" max="5"
+                            step="0.1" value="5.0" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeAddTeacherModal()">Cancelar</button>
+                <button class="btn-save" onclick="saveNewTeacher()">
+                    <i class="fas fa-user-plus"></i> Adicionar Docente
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Configurações -->
+    <div class="modal-overlay" id="configModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="config-modal-title"><i class="fas fa-cog"></i> Configurações</h3>
+                <button class="modal-close" onclick="closeConfigModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="config-modal-body">
+                <!-- Conteúdo dinâmico -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeConfigModal()">Cancelar</button>
+                <button class="btn-save" onclick="saveConfigChanges()">
+                    <i class="fas fa-save"></i> Salvar Configurações
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="../frontend/scripts/main.js"></script>
+
+</body>
+
+</html>

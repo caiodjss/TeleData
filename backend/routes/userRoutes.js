@@ -1,144 +1,47 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
-const { Op } = require("sequelize");
 const authenticateToken = require("../middleware/auth");
 const authorizeRoles = require("../middleware/authorizeRoles");
-const User = require("../database/models/user");
+const userController = require("../controllers/userController");
 
 const router = express.Router();
 
-// Função auxiliar: define quais campos podem ser editados
-const editableFields = ["full_name", "email", "profile_image_url", "biography", "password_hash"];
+// ADMIN
+// Adicionar novo admin
+router.post( "/admin/add", authenticateToken, authorizeRoles("admin"), userController.adminAddUser);
 
-router.put("/admin/edit/:email", authenticateToken, authorizeRoles("admin"), async (req, res) => {
-  try {
-    const { email } = req.params;
-    const updates = req.body;
+// Editar admin por id ou email
+router.put("/admin/edit/:id",authenticateToken,authorizeRoles("admin"),userController.adminEditUser);
 
-    const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
+// Deletar admin por id ou email
+router.delete("/admin/delete/:id",authenticateToken,authorizeRoles("admin"),userController.adminDeleteUser);
 
-    // Se for mudar a senha, criptografar
-    if (updates.password) {
-      updates.password_hash = await bcrypt.hash(updates.password, 12);
-      delete updates.password;
-    }
+// Listar admins (com filtros: nível de acesso, status)
+router.get("/admin/list",authenticateToken,authorizeRoles("admin"),userController.adminListUsers);
 
-    for (const key in updates) {
-      if (editableFields.includes(key)) {
-        user[key] = updates[key];
-      }
-    }
+// INSTRUCTOR
+// Adicionar docente
+router.post("/instructor/add",authenticateToken,authorizeRoles("admin"),userController.instructorAddUser);
 
-    await user.save();
-    res.json({ message: "Usuário atualizado com sucesso (admin)", user });
-  } catch (err) {
-    console.error("Erro ao editar usuário (admin):", err);
-    res.status(500).json({ message: "Erro interno do servidor" });
-  }
-});
+// Editar docente (instrutor pode editar a própria conta, admin pode editar qualquer)
+router.put("/instructor/edit/:id",authenticateToken,authorizeRoles("admin", "instructor"),userController.instructorEditAccount);
 
-// Soft delete (admin)
-router.delete("/admin/delete/:email", authenticateToken, authorizeRoles("admin"), async (req, res) => {
-  try {
-    const { email } = req.params;
+// Deletar docente (instrutor pode deletar a própria conta, admin pode deletar qualquer)
+router.delete("/instructor/delete/:id",authenticateToken,authorizeRoles("admin", "instructor"),userController.instructorDeleteAccount);
 
-    const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
+// Listar docentes
+router.get("/instructor/list",authenticateToken,authorizeRoles("admin"),userController.instructorListUsers);
 
-    user.deleted_at = new Date();
-    await user.save();
+// STUDENT
+// Adicionar estudante
+router.post("/student/add",authenticateToken,authorizeRoles("admin"),userController.studentAddUser);
 
-    res.json({ message: "Usuário excluído (soft delete) com sucesso pelo admin" });
-  } catch (err) {
-    console.error("Erro ao excluir usuário (admin):", err);
-    res.status(500).json({ message: "Erro interno do servidor" });
-  }
-});
+// Editar estudante (aluno pode editar a própria conta, admin pode editar qualquer)
+router.put("/student/edit/:id",authenticateToken,authorizeRoles("admin", "student"),userController.studentEditAccount);
 
+// Deletar estudante (aluno pode deletar a própria conta, admin pode deletar qualquer)
+router.delete("/student/delete/:id",authenticateToken,authorizeRoles("admin", "student"),userController.studentDeleteAccount);
 
-router.put("/instructor/edit", authenticateToken, authorizeRoles("instructor"), async (req, res) => {
-  try {
-    const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
-
-    const updates = req.body;
-
-    if (updates.password) {
-      updates.password_hash = await bcrypt.hash(updates.password, 12);
-      delete updates.password;
-    }
-
-    for (const key in updates) {
-      if (editableFields.includes(key)) {
-        user[key] = updates[key];
-      }
-    }
-
-    await user.save();
-    res.json({ message: "Conta atualizada com sucesso (instrutor)", user });
-  } catch (err) {
-    console.error("Erro ao editar conta (instrutor):", err);
-    res.status(500).json({ message: "Erro interno do servidor" });
-  }
-});
-
-// Soft delete (instrutor)
-router.delete("/instructor/delete", authenticateToken, authorizeRoles("instructor"), async (req, res) => {
-  try {
-    const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
-
-    user.deleted_at = new Date();
-    await user.save();
-
-    res.json({ message: "Conta excluída (soft delete) com sucesso (instrutor)" });
-  } catch (err) {
-    console.error("Erro ao excluir conta (instrutor):", err);
-    res.status(500).json({ message: "Erro interno do servidor" });
-  }
-});
-
-router.put("/student/edit", authenticateToken, authorizeRoles("student"), async (req, res) => {
-  try {
-    const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
-
-    const updates = req.body;
-
-    if (updates.password) {
-      updates.password_hash = await bcrypt.hash(updates.password, 12);
-      delete updates.password;
-    }
-
-    for (const key in updates) {
-      if (editableFields.includes(key)) {
-        user[key] = updates[key];
-      }
-    }
-
-    await user.save();
-    res.json({ message: "Conta atualizada com sucesso (estudante)", user });
-  } catch (err) {
-    console.error("Erro ao editar conta (estudante):", err);
-    res.status(500).json({ message: "Erro interno do servidor" });
-  }
-});
-
-// Soft delete (estudante)
-router.delete("/student/delete", authenticateToken, authorizeRoles("student"), async (req, res) => {
-  try {
-    const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
-
-    user.deleted_at = new Date();
-    await user.save();
-
-    res.json({ message: "Conta excluída (soft delete) com sucesso (estudante)" });
-  } catch (err) {
-    console.error("Erro ao excluir conta (estudante):", err);
-    res.status(500).json({ message: "Erro interno do servidor" });
-  }
-});
+// Listar estudantes
+router.get("/student/list",authenticateToken,authorizeRoles("admin"),userController.studentListUsers);
 
 module.exports = router;

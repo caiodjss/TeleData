@@ -36,7 +36,7 @@ const User = sequelize.define("User", {
   user_type: {
     type: DataTypes.ENUM("student", "instructor", "admin"),
     allowNull: false,
-    defaultValue: "student" // padrão
+    defaultValue: "student"
   },
 
   // Informações de perfil
@@ -65,7 +65,7 @@ const User = sequelize.define("User", {
     defaultValue: DataTypes.NOW
   },
 
-  // Autenticação 2FA
+  // Autenticação 2FA antiga (pode ser removida se não for mais usada)
   two_factor_enabled: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
@@ -73,6 +73,21 @@ const User = sequelize.define("User", {
   },
   two_factor_secret: {
     type: DataTypes.STRING(255),
+    allowNull: true
+  },
+
+  // NOVO: 2FA via e-mail
+  two_factor_email_enabled: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  two_factor_code: {
+    type: DataTypes.STRING(10),
+    allowNull: true
+  },
+  two_factor_expires: {
+    type: DataTypes.DATE,
     allowNull: true
   },
 
@@ -111,5 +126,4 @@ const User = sequelize.define("User", {
   tableName: "Users",
   timestamps: false
 });
-
 module.exports = User;
