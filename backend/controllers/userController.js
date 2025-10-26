@@ -11,7 +11,7 @@ const editableFields = [
 ];
 
 module.exports = {
-  // ====================== ADMIN ======================
+  // ADMIN
   async adminAddUser(req, res) {
     try {
       const { full_name, email, password, user_type } = req.body;
@@ -102,7 +102,7 @@ module.exports = {
     }
   },
 
-  // ====================== INSTRUCTOR ======================
+  // INSTRUCTOR
   async instructorAddUser(req, res) {
     try {
       const { full_name, email, password } = req.body;
@@ -179,7 +179,7 @@ module.exports = {
     }
   },
 
-  // ====================== STUDENT ======================
+  // STUDENT
   async studentAddUser(req, res) {
     try {
       const { full_name, email, password } = req.body;
