@@ -9,11 +9,11 @@ const router = express.Router();
 // Adicionar novo admin
 router.post( "/admin/add", authenticateToken, authorizeRoles("admin"), userController.adminAddUser);
 
-// Editar admin por id ou email
-router.put("/admin/edit/:id",authenticateToken,authorizeRoles("admin"),userController.adminEditUser);
+// Editar admin por email
+router.put("/admin/edit",authenticateToken,authorizeRoles("admin"),userController.adminEditUser);
 
-// Deletar admin por id ou email
-router.delete("/admin/delete/:id",authenticateToken,authorizeRoles("admin"),userController.adminDeleteUser);
+// Deletar admin por email
+router.delete("/admin/delete/:email",authenticateToken,authorizeRoles("admin"),userController.adminDeleteUser);
 
 // Listar admins (com filtros: nível de acesso, status)
 router.get("/admin/list",authenticateToken,authorizeRoles("admin"),userController.adminListUsers);
@@ -23,10 +23,10 @@ router.get("/admin/list",authenticateToken,authorizeRoles("admin"),userControlle
 router.post("/instructor/add",authenticateToken,authorizeRoles("admin"),userController.instructorAddUser);
 
 // Editar docente (instrutor pode editar a própria conta, admin pode editar qualquer)
-router.put("/instructor/edit/:id",authenticateToken,authorizeRoles("admin", "instructor"),userController.instructorEditAccount);
+router.put("/instructor/edit",authenticateToken,authorizeRoles("admin", "instructor"),userController.instructorEditAccount);
 
 // Deletar docente (instrutor pode deletar a própria conta, admin pode deletar qualquer)
-router.delete("/instructor/delete/:id",authenticateToken,authorizeRoles("admin", "instructor"),userController.instructorDeleteAccount);
+router.delete("/instructor/delete/:email",authenticateToken,authorizeRoles("admin", "instructor"),userController.instructorDeleteAccount);
 
 // Listar docentes
 router.get("/instructor/list",authenticateToken,authorizeRoles("admin"),userController.instructorListUsers);
@@ -36,10 +36,10 @@ router.get("/instructor/list",authenticateToken,authorizeRoles("admin"),userCont
 router.post("/student/add",authenticateToken,authorizeRoles("admin"),userController.studentAddUser);
 
 // Editar estudante (aluno pode editar a própria conta, admin pode editar qualquer)
-router.put("/student/edit/:id",authenticateToken,authorizeRoles("admin", "student"),userController.studentEditAccount);
+router.put("/student/edit",authenticateToken,authorizeRoles("admin", "student"),userController.studentEditAccount);
 
 // Deletar estudante (aluno pode deletar a própria conta, admin pode deletar qualquer)
-router.delete("/student/delete/:id",authenticateToken,authorizeRoles("admin", "student"),userController.studentDeleteAccount);
+router.delete("/student/delete/:email",authenticateToken,authorizeRoles("admin", "student"),userController.studentDeleteAccount);
 
 // Listar estudantes
 router.get("/student/list",authenticateToken,authorizeRoles("admin"),userController.studentListUsers);

@@ -40,7 +40,7 @@ connection.sync({ alter: true })
 app.use("/home", home);
 app.use("/profile", profileRouter);
 app.use("/auth", authRouter);
-app.use("/register", registeruser);
+app.use("/", registeruser);
 app.use("/user", userRoutes);
 app.use("/reports", reportRoutes);
 app.use("/dashboard", dashboardRoutes);

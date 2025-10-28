@@ -25,12 +25,17 @@ const User = sequelize.define("User", {
     allowNull: false,
     unique: true
   },
+  deleted_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 
   // Senha criptografada
   password_hash: {
     type: DataTypes.STRING(255),
     allowNull: false
   },
+  
 
   // Tipo de usuário: estudante, instrutor ou admin
   user_type: {
@@ -124,6 +129,10 @@ const User = sequelize.define("User", {
 
 }, {
   tableName: "Users",
-  timestamps: false
+  timestamps: false,
+  createdAt: "created_at",
+  updatedAt: "updated_at",
+  paranoid: true,
+  deletedAt: "deleted_at"
 });
 module.exports = User;

@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../database/models/user");
+const { Op } = require("sequelize");
+
 
 const editableFields = [
   "full_name",
@@ -92,7 +94,7 @@ module.exports = {
       const where = {};
       if (user_type) where.user_type = user_type;
       if (status === "active") where.deleted_at = null;
-      if (status === "deleted") where.deleted_at = { $ne: null };
+      if (status === "deleted") where.deleted_at = { [Op.ne]: null };
 
       const users = await User.findAll({ where });
       res.json(users);
@@ -232,13 +234,22 @@ module.exports = {
 
   async studentDeleteAccount(req, res) {
     try {
-      const { email } = req.user;
-      const user = await User.findOne({ where: { email } });
-      if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
-
-      user.deleted_at = new Date();
-      await user.save();
-
+      const { email } = req.params;
+  
+      if (email) {
+        return res.status(400).json({ message: "ID do usuário é obrigatório." });
+      }
+  
+      const user = await User.findByPk(id);
+      if (!user) {
+        return res.status(404).json({ message: "Usuário não encontrado." });
+      }
+  
+      await User.update(
+        { deleted_at: new Date() },
+        { where: { user_id: email } }
+      );
+  
       res.json({ message: "Conta excluída (soft delete) com sucesso (estudante)" });
     } catch (err) {
       console.error("Erro ao excluir conta (estudante):", err);

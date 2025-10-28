@@ -51,7 +51,7 @@ npm run dev
 ## Autenticação e Autorização
 
 ### Registro de Usuário
-**POST** `/registeruser`
+**POST** `/register`
 
 **Request:**
 ```json
@@ -59,7 +59,7 @@ npm run dev
   "name": "Nome do Usuário",
   "email": "usuario@email.com",
   "password": "Senha@123",
-  "role": "student"
+  "user_type": "student"
 }
 ```
 

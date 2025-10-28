@@ -6,9 +6,7 @@ const { Op } = require("sequelize");
 const User = require("../database/models/user");
 const config = require("../config/config");
 
-// ----------------------
 // Ativação de conta
-// ----------------------
 exports.activateAccount = async (req, res) => {
   try {
     const { token } = req.params;
@@ -36,9 +34,7 @@ exports.activateAccount = async (req, res) => {
   }
 };
 
-// ----------------------
 // Login com e-mail e senha
-// ----------------------
 exports.login = async (req, res) => {
   try {
     const { email, password, rememberMe } = req.body;
@@ -91,7 +87,7 @@ exports.login = async (req, res) => {
 
     // Caso não use verificação por e-mail → login direto
     const accessToken = jwt.sign(
-      { user_id: user.user_id, email: user.email },
+      { user_id: user.user_id, email: user.email, user_type: user.user_type },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
@@ -99,7 +95,7 @@ exports.login = async (req, res) => {
     let refreshToken;
     if (rememberMe) {
       refreshToken = jwt.sign(
-        { user_id: user.user_id, email: user.email },
+        { user_id: user.user_id, email: user.email, user_type: user.user_type },
         process.env.JWT_REFRESH_SECRET,
         { expiresIn: "7d" }
       );
@@ -118,9 +114,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// ----------------------
 // Verificação do login por e-mail (código temporário)
-// ----------------------
 exports.verifyLoginEmail = async (req, res) => {
   try {
     const { email, code } = req.body;
@@ -144,7 +138,7 @@ exports.verifyLoginEmail = async (req, res) => {
 
     // Gera JWT final
     const token = jwt.sign(
-      { user_id: user.user_id, email: user.email },
+      { user_id: user.user_id, email: user.email, user_type: user.user_type },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
