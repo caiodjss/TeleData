@@ -1,6 +1,9 @@
 const bcrypt = require("bcrypt");
 const User = require("../database/models/user");
 const { Op } = require("sequelize");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+const config = require("../config/config");
 
 
 const editableFields = [
@@ -16,22 +19,49 @@ module.exports = {
   // ADMIN
   async adminAddUser(req, res) {
     try {
-      const { full_name, email, password, user_type } = req.body;
+      const { name, email, password, user_type } = req.body;
 
-      if (!full_name || !email || !password)
+      if (!name || !email || !password)
         return res.status(400).json({ message: "Campos obrigatórios faltando" });
 
       const existing = await User.findOne({ where: { email } });
       if (existing)
         return res.status(400).json({ message: "Usuário com este email já existe" });
 
-      const password_hash = await bcrypt.hash(password, 12);
+      const hashed_password = await bcrypt.hash(password, 12);
+      const activationToken = crypto.randomBytes(32).toString("hex");
+      const activationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
       const newUser = await User.create({
-        full_name,
+        full_name: name,
         email,
-        password_hash,
-        user_type: user_type || "student"
+        password_hash: hashed_password,
+        user_type,
+        is_active: false,
+        activation_token: activationToken,
+        activation_token_expires: activationExpires
+      });
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: config.email.user,
+          pass: config.email.pass,
+        },
+      });
+
+      const activationLink = `http://localhost:3001/auth/activate/${activationToken}`;
+
+      await transporter.sendMail({
+        from: config.email.user,
+        to: email,
+        subject: "Ative sua conta TeleData",
+        html: `
+          <p>Olá ${name}, bem-vindo ao TeleData!</p>
+          <p>Clique no link abaixo para ativar sua conta:</p>
+          <a href="${activationLink}">${activationLink}</a>
+          <p>O link expira em 24 horas.</p>
+        `,
       });
 
       res.status(201).json({ message: "Usuário adicionado com sucesso", user: newUser });
@@ -71,9 +101,9 @@ module.exports = {
 
   async adminDeleteUser(req, res) {
     try {
-      const { id, email } = req.params;
-      const user = id
-        ? await User.findByPk(id)
+      const { user_id, email } = req.params;
+      const user = user_id
+        ? await User.findByPk(user_id)
         : await User.findOne({ where: { email } });
 
       if (!user) return res.status(404).json({ message: "Usuário não encontrado" });

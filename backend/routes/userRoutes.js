@@ -13,7 +13,7 @@ router.post( "/admin/add", authenticateToken, authorizeRoles("admin"), userContr
 router.put("/admin/edit",authenticateToken,authorizeRoles("admin"),userController.adminEditUser);
 
 // Deletar admin por email
-router.delete("/admin/delete/:email",authenticateToken,authorizeRoles("admin"),userController.adminDeleteUser);
+router.delete("/admin/delete",authenticateToken,authorizeRoles("admin"),userController.adminDeleteUser);
 
 // Listar admins (com filtros: nível de acesso, status)
 router.get("/admin/list",authenticateToken,authorizeRoles("admin"),userController.adminListUsers);
