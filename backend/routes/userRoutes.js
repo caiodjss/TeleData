@@ -18,15 +18,15 @@ router.get("/admin/list",authenticateToken,authorizeRoles("admin"),userControlle
 
 
 // INSTRUCTOR
-// Editar docente (instrutor pode editar a própria conta, admin pode editar qualquer)
-router.put("/instructor/edit",authenticateToken,authorizeRoles("admin", "instructor"),userController.instructorEditAccount);
+// Editar docente (instrutor pode editar a própria conta)
+router.put("/instructor/edit",authenticateToken,authorizeRoles("instructor"),userController.instructorEditAccount);
 // Deletar docente (instrutor pode deletar a própria conta, admin pode deletar qualquer)
-router.delete("/instructor/delete/:email",authenticateToken,authorizeRoles("admin", "instructor"),userController.instructorDeleteAccount);
+router.delete("/instructor/delete/",authenticateToken,authorizeRoles("instructor"),userController.instructorDeleteAccount);
 
 // STUDENT
-// Editar estudante (aluno pode editar a própria conta, admin pode editar qualquer)
-router.put("/student/edit",authenticateToken,authorizeRoles("admin", "student"),userController.studentEditAccount);
-// Deletar estudante (aluno pode deletar a própria conta, admin pode deletar qualquer)
-router.delete("/student/delete/:email",authenticateToken,authorizeRoles("admin", "student"),userController.studentDeleteAccount);
+// Editar estudante (aluno pode editar a própria conta)
+router.put("/student/edit",authenticateToken,authorizeRoles("student"),userController.studentEditAccount);
+// Deletar estudante (aluno pode deletar a própria conta)
+router.delete("/student/delete/",authenticateToken,authorizeRoles("student"),userController.studentDeleteAccount);
 
 module.exports = router;

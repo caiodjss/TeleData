@@ -157,7 +157,7 @@ async adminEditUser(req, res) {
       }
 
       await user.save();
-      res.json({ message: "Conta atualizada com sucesso (instrutor)", user });
+      res.json({ message: "Conta atualizada com sucesso", user });
     } catch (err) {
       console.error("Erro ao editar conta (instrutor):", err);
       res.status(500).json({ message: "Erro interno do servidor" });
@@ -166,14 +166,14 @@ async adminEditUser(req, res) {
 
   async instructorDeleteAccount(req, res) {
     try {
-      const { email } = req.user;
+      const { email } = req.body;
       const user = await User.findOne({ where: { email } });
       if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
 
       user.deleted_at = new Date();
       await user.save();
 
-      res.json({ message: "Conta excluída (soft delete) com sucesso (instrutor)" });
+      res.json({ message: "Conta excluída (soft delete) com sucesso" });
     } catch (err) {
       console.error("Erro ao excluir conta (instrutor):", err);
       res.status(500).json({ message: "Erro interno do servidor" });
