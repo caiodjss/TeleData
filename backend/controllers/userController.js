@@ -11,12 +11,12 @@ const editableFields = [
   "email",
   "profile_image_url",
   "biography",
-  "password_hash",
-  "user_type"
+  "user_type",
+  "is_active"
 ];
 
 module.exports = {
-  // ADMIN
+  // ADMIN 
   async adminAddUser(req, res) {
     try {
       const { name, email, password, user_type } = req.body;
@@ -58,6 +58,7 @@ module.exports = {
         subject: "Ative sua conta TeleData",
         html: `
           <p>Olá ${name}, bem-vindo ao TeleData!</p>
+          <p>Você foi cadastrado como ${user_type}
           <p>Clique no link abaixo para ativar sua conta:</p>
           <a href="${activationLink}">${activationLink}</a>
           <p>O link expira em 24 horas.</p>
@@ -71,33 +72,36 @@ module.exports = {
     }
   },
 
-  async adminEditUser(req, res) {
-    try {
-      const { id, email } = req.params;
-      const updates = req.body;
+async adminEditUser(req, res) {
+  try {
+    const { email, password, ...updates } = req.body;
 
-      const user = id
-        ? await User.findByPk(id)
-        : await User.findOne({ where: { email } });
+    if (!email)
+      return res.status(400).json({ message: "E-mail é obrigatório para atualização" });
 
-      if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
+    const user = await User.findOne({ where: { email } });
 
-      if (updates.password) {
-        updates.password_hash = await bcrypt.hash(updates.password, 12);
-        delete updates.password;
-      }
+    if (!user)
+      return res.status(404).json({ message: "Usuário não encontrado" });
 
-      for (const key in updates) {
-        if (editableFields.includes(key)) user[key] = updates[key];
-      }
-
-      await user.save();
-      res.json({ message: "Usuário atualizado com sucesso (admin)", user });
-    } catch (err) {
-      console.error("Erro ao editar usuário (admin):", err);
-      res.status(500).json({ message: "Erro interno do servidor" });
+    if (password) {
+      updates.password_hash = await bcrypt.hash(password, 12);
     }
-  },
+
+    for (const key in updates) {
+      if (editableFields.includes(key)) {
+        user[key] = updates[key];
+      }
+    }
+
+    await user.save();
+
+    res.json({ message: "Usuário atualizado com sucesso (admin)", user });
+  } catch (err) {
+    console.error("Erro ao editar usuário (admin):", err);
+    res.status(500).json({ message: "Erro interno do servidor" });
+  }
+},
 
   async adminDeleteUser(req, res) {
     try {
