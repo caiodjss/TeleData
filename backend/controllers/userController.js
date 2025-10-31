@@ -105,7 +105,7 @@ async adminEditUser(req, res) {
 
   async adminDeleteUser(req, res) {
     try {
-      const { user_id, email } = req.params;
+      const { user_id, email } = req.body;
       const user = user_id
         ? await User.findByPk(user_id)
         : await User.findOne({ where: { email } });
@@ -124,7 +124,7 @@ async adminEditUser(req, res) {
 
   async adminListUsers(req, res) {
     try {
-      const { user_type, status } = req.query; // filtros opcionais
+      const { user_type, status } = req.body || {}; // filtros opcionais
       const where = {};
       if (user_type) where.user_type = user_type;
       if (status === "active") where.deleted_at = null;
@@ -138,31 +138,6 @@ async adminEditUser(req, res) {
     }
   },
 
-  // INSTRUCTOR
-  async instructorAddUser(req, res) {
-    try {
-      const { full_name, email, password } = req.body;
-      if (!full_name || !email || !password)
-        return res.status(400).json({ message: "Campos obrigatórios faltando" });
-
-      const existing = await User.findOne({ where: { email } });
-      if (existing)
-        return res.status(400).json({ message: "Usuário com este email já existe" });
-
-      const password_hash = await bcrypt.hash(password, 12);
-      const newUser = await User.create({
-        full_name,
-        email,
-        password_hash,
-        user_type: "instructor"
-      });
-
-      res.status(201).json({ message: "Instrutor adicionado com sucesso", user: newUser });
-    } catch (err) {
-      console.error("Erro ao adicionar instrutor:", err);
-      res.status(500).json({ message: "Erro interno do servidor" });
-    }
-  },
 
   async instructorEditAccount(req, res) {
     try {
@@ -205,42 +180,7 @@ async adminEditUser(req, res) {
     }
   },
 
-  async instructorListUsers(req, res) {
-    try {
-      const users = await User.findAll({ where: { user_type: "instructor", deleted_at: null } });
-      res.json(users);
-    } catch (err) {
-      console.error("Erro ao listar instrutores:", err);
-      res.status(500).json({ message: "Erro interno do servidor" });
-    }
-  },
-
   // STUDENT
-  async studentAddUser(req, res) {
-    try {
-      const { full_name, email, password } = req.body;
-      if (!full_name || !email || !password)
-        return res.status(400).json({ message: "Campos obrigatórios faltando" });
-
-      const existing = await User.findOne({ where: { email } });
-      if (existing)
-        return res.status(400).json({ message: "Usuário com este email já existe" });
-
-      const password_hash = await bcrypt.hash(password, 12);
-      const newUser = await User.create({
-        full_name,
-        email,
-        password_hash,
-        user_type: "student"
-      });
-
-      res.status(201).json({ message: "Estudante adicionado com sucesso", user: newUser });
-    } catch (err) {
-      console.error("Erro ao adicionar estudante:", err);
-      res.status(500).json({ message: "Erro interno do servidor" });
-    }
-  },
-
   async studentEditAccount(req, res) {
     try {
       const { email } = req.user;
@@ -290,14 +230,4 @@ async adminEditUser(req, res) {
       res.status(500).json({ message: "Erro interno do servidor" });
     }
   },
-
-  async studentListUsers(req, res) {
-    try {
-      const users = await User.findAll({ where: { user_type: "student", deleted_at: null } });
-      res.json(users);
-    } catch (err) {
-      console.error("Erro ao listar estudantes:", err);
-      res.status(500).json({ message: "Erro interno do servidor" });
-    }
-  }
 };
