@@ -4,9 +4,7 @@ const Enrollment = require("../database/models/enrollment");
 const Course = require("../database/models/courses");
 const Activity = require("../database/models/activity");
 
-// ----------------------
 // Métricas principais
-// ----------------------
 async function getMetrics(req, res) {
   try {
     const totalUsers = await User.count();
@@ -36,9 +34,7 @@ async function getMetrics(req, res) {
   }
 }
 
-// ----------------------
 // Últimos usuários cadastrados
-// ----------------------
 async function getRecentUsers(req, res) {
   try {
     const users = await User.findAll({

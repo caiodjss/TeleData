@@ -5,6 +5,8 @@ const userController = require("../controllers/userController");
 
 const router = express.Router();
 
+// Rotas testadas via Postman. Todas funcionais.
+
 // ADMIN
 // Adicionar novo admin
 router.post( "/admin/add", authenticateToken, authorizeRoles("admin"), userController.adminAddUser);
@@ -14,8 +16,6 @@ router.put("/admin/edit",authenticateToken,authorizeRoles("admin"),userControlle
 router.delete("/admin/delete",authenticateToken,authorizeRoles("admin"),userController.adminDeleteUser);
 // Listar admins (com filtros: nível de acesso, status)
 router.get("/admin/list",authenticateToken,authorizeRoles("admin"),userController.adminListUsers);
-// Rotas de administrador testadas via Postman. Todas funcionais.
-
 
 // INSTRUCTOR
 // Editar docente (instrutor pode editar a própria conta)
