@@ -30,6 +30,7 @@ const dashboardRoutes = require("./routes/dashboardRoutes");
 const ticketRoutes = require("./routes/ticketRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 
 // Sincronizando banco
 connection.sync({ alter: true })
@@ -47,6 +48,7 @@ app.use("/dashboard", dashboardRoutes);
 app.use("/tickets", ticketRoutes);
 app.use("/courses", courseRoutes);
 app.use("/settings", settingsRoutes);
+app.use("/payments", paymentRoutes);
 app.use("/tmp", express.static("tmp"));
 
 // Log do servidor
