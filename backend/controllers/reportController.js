@@ -9,7 +9,6 @@ const fs = require("fs");
 const path = require("path");
 
 //  CSV/PDF de usuários (existentes) 
-
 exports.exportCSV = async (req, res) => {
   try {
     const users = await User.findAll({ raw: true, order: [["user_id", "ASC"]] });

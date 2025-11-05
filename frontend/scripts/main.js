@@ -66,16 +66,16 @@ async function fetchMetrics() {
 }
 
 // 2. Buscar Usuários Recentes
-async function fetchRecentUsers() {
+async function fetchRecentuser() {
     try {
-        const response = await fetch(`${API_BASE_URL}/dashboard/users/recent`, {
+        const response = await fetch(`${API_BASE_URL}/dashboard/user/recent`, {
             method: 'GET',
             headers: getAuthHeaders()
         });
 
         if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
-        const recentUsers = await response.json();
-        updateRecentUsersTable(recentUsers);
+        const recentuser = await response.json();
+        updateRecentuserTable(recentuser);
     } catch (error) {
         handleApiError(error);
     }
@@ -134,7 +134,7 @@ async function fetchRecentActivities() {
 // Administradores
 async function fetchAdmins() {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/admin/list`, {
+        const response = await fetch(`${API_BASE_URL}/user/admin/list`, {
             method: 'GET',
             headers: getAuthHeaders()
         });
@@ -167,7 +167,7 @@ async function addAdmin(adminData) {
 
 async function editAdmin(id, adminData) {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/admin/edit/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/user/admin/edit/`, {
             method: 'PUT',
             headers: getAuthHeaders(),
             body: JSON.stringify(adminData)
@@ -185,7 +185,7 @@ async function editAdmin(id, adminData) {
 
 async function deleteAdmin(id) {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/admin/delete/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/user/admin/delete/${id}`, {
             method: 'DELETE',
             headers: getAuthHeaders()
         });
@@ -201,7 +201,7 @@ async function deleteAdmin(id) {
 // Docentes
 async function fetchTeachers() {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/instructor/list`, {
+        const response = await fetch(`${API_BASE_URL}/user/instructor/list`, {
             method: 'GET',
             headers: getAuthHeaders()
         });
@@ -216,7 +216,7 @@ async function fetchTeachers() {
 
 async function addTeacher(teacherData) {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/instructor/add`, {
+        const response = await fetch(`${API_BASE_URL}/user/instructor/add`, {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify(teacherData)
@@ -234,7 +234,7 @@ async function addTeacher(teacherData) {
 
 async function editTeacher(id, teacherData) {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/instructor/edit/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/user/instructor/edit/${id}`, {
             method: 'PUT',
             headers: getAuthHeaders(),
             body: JSON.stringify(teacherData)
@@ -252,7 +252,7 @@ async function editTeacher(id, teacherData) {
 
 async function deleteTeacher(id) {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/instructor/delete/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/user/instructor/delete/${id}`, {
             method: 'DELETE',
             headers: getAuthHeaders()
         });
@@ -268,7 +268,7 @@ async function deleteTeacher(id) {
 // Estudantes
 async function fetchStudents() {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/student/list`, {
+        const response = await fetch(`${API_BASE_URL}/user/student/list`, {
             method: 'GET',
             headers: getAuthHeaders()
         });
@@ -283,7 +283,7 @@ async function fetchStudents() {
 
 async function addStudent(studentData) {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/student/add`, {
+        const response = await fetch(`${API_BASE_URL}/user/student/add`, {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify(studentData)
@@ -301,7 +301,7 @@ async function addStudent(studentData) {
 
 async function editStudent(id, studentData) {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/student/edit/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/user/student/edit/${id}`, {
             method: 'PUT',
             headers: getAuthHeaders(),
             body: JSON.stringify(studentData)
@@ -319,7 +319,7 @@ async function editStudent(id, studentData) {
 
 async function deleteStudent(id) {
     try {
-        const response = await fetch(`${API_BASE_URL}/users/student/delete/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/user/student/delete/${id}`, {
             method: 'DELETE',
             headers: getAuthHeaders()
         });
@@ -569,9 +569,9 @@ async function exportPDF() {
 
 // Atualizar cards de métricas
 function updateMetricsCards(metrics) {
-    if (metrics.totalUsers !== undefined) {
+    if (metrics.totaluser !== undefined) {
         const element = document.querySelector('.metric-card:nth-child(1) .metric-value');
-        if (element) element.textContent = metrics.totalUsers;
+        if (element) element.textContent = metrics.totaluser;
     }
 
     if (metrics.activeSessions !== undefined) {
@@ -589,20 +589,20 @@ function updateMetricsCards(metrics) {
         if (element) element.innerHTML = `${metrics.responseTime}<span class="unit">ms</span>`;
     }
 
-    if (metrics.userSatisfaction !== undefined) {
+    if (metrics.useratisfaction !== undefined) {
         const element = document.querySelector('.metric-card:nth-child(5) .metric-value');
-        if (element) element.innerHTML = `${metrics.userSatisfaction}<span class="unit">/5</span>`;
+        if (element) element.innerHTML = `${metrics.useratisfaction}<span class="unit">/5</span>`;
     }
 }
 
 // Atualizar tabela de usuários recentes
-function updateRecentUsersTable(users) {
-    const tbody = document.querySelector('.recent-users tbody');
+function updateRecentuserTable(user) {
+    const tbody = document.querySelector('.recent-user tbody');
     if (!tbody) return;
 
     tbody.innerHTML = '';
 
-    users.forEach(user => {
+    user.forEach(user => {
         const row = document.createElement('tr');
         const statusClass = user.status === 'Ativo' ? 'status-active' : 'status-inactive';
         const statusText = user.status === 'Ativo' ? 'Ativo' : 'Inativo';
@@ -881,7 +881,7 @@ function updateProfileSection(profile) {
         const statElements = document.querySelectorAll('.stat-value');
         if (statElements[0] && stats.actions) statElements[0].textContent = stats.actions;
         if (statElements[1] && stats.onlineTime) statElements[1].textContent = stats.onlineTime;
-        if (statElements[2] && stats.usersManaged) statElements[2].textContent = stats.usersManaged;
+        if (statElements[2] && stats.userManaged) statElements[2].textContent = stats.userManaged;
         if (statElements[3] && stats.ticketsHandled) statElements[3].textContent = stats.ticketsHandled;
     }
 }
@@ -942,7 +942,7 @@ async function loadDashboardData() {
     try {
         await Promise.all([
             fetchMetrics(),
-            fetchRecentUsers(),
+            fetchRecentuser(),
             fetchProfilesDistribution(),
             fetchCoursesAcquired(),
             fetchRecentActivities()

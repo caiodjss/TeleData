@@ -4,7 +4,7 @@ const Enrollment = require("../database/models/enrollment");
 const Course = require("../database/models/courses");
 const Activity = require("../database/models/activity");
 
-// Métricas principais
+// Métricas principais - Testado e funcional parcial.
 async function getMetrics(req, res) {
   try {
     const totalUsers = await User.count();
@@ -12,21 +12,11 @@ async function getMetrics(req, res) {
     const totalInstructors = await User.count({ where: { user_type: "instructor" } });
     const totalAdmins = await User.count({ where: { user_type: "admin" } });
 
-    // Dados placeholders (substituir com métricas reais se houver)
-    const activeSessions = 84;
-    const errorRate = 2.3;
-    const avgResponseTime = 320;
-    const userSatisfaction = 4.7;
-
     res.json({
       totalUsers,
       totalStudents,
       totalInstructors,
-      totalAdmins,
-      activeSessions,
-      errorRate,
-      avgResponseTime,
-      userSatisfaction
+      totalAdmins, 
     });
   } catch (error) {
     console.error(error);
@@ -34,7 +24,7 @@ async function getMetrics(req, res) {
   }
 }
 
-// Últimos usuários cadastrados
+// Últimos usuários cadastrados - Testado tudo ok.
 async function getRecentUsers(req, res) {
   try {
     const users = await User.findAll({
@@ -49,9 +39,7 @@ async function getRecentUsers(req, res) {
   }
 }
 
-// ----------------------
 // Distribuição de perfis (gráfico de pizza)
-// ----------------------
 async function getProfilesDistribution(req, res) {
   try {
     const students = await User.count({ where: { user_type: "student" } });
@@ -69,9 +57,7 @@ async function getProfilesDistribution(req, res) {
   }
 }
 
-// ----------------------
 // Cursos adquiridos (gráfico de barras)
-// ----------------------
 async function getCoursesAcquired(req, res) {
   try {
     const enrollments = await Enrollment.findAll({ attributes: ["course_id"], raw: true });
@@ -93,9 +79,7 @@ async function getCoursesAcquired(req, res) {
   }
 }
 
-// ----------------------
 // Timeline de atividades recentes
-// ----------------------
 async function getActivities(req, res) {
   try {
     const activities = await Activity.findAll({
